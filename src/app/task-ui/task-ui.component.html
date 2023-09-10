@@ -32,8 +32,8 @@
                 <td>{{ task.dueDate }}</td>
                 <td>{{ task.status }}</td>
                 <td>
-                    <button class="btn btn-primary" [routerLink]="['/edit-task', task.id]">Edit</button>
-                    <button class="btn btn-danger" (click)="deleteTask(task)">Delete</button>
+                    <button class="btn btn-primary m-1" [routerLink]="['/edit-task', task.id]">Edit</button>  
+                    <button class="btn btn-danger m-1" (click)="deleteTask(task)"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         </tbody>
