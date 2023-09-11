@@ -3,20 +3,20 @@
     <form #taskForm="ngForm" (ngSubmit)="onSubmit(taskForm.value)">
         <div class="mb-3">
             <label for="taskTitle" class="form-label">Task Title</label>
-            <input type="text" class="form-control" id="taskTitle" name="title" [(ngModel)]="task.title" required>
+            <input type="text" class="form-control" id="taskTitle" name="title" [(ngModel)]="specificTask.title" required>
         </div>
         <div class="mb-3">
             <label for="taskDescription" class="form-label">Task Description</label>
-            <textarea class="form-control" id="taskDescription" name="description" [(ngModel)]="task.description"
+            <textarea class="form-control" id="taskDescription" name="description" [(ngModel)]="specificTask.description"
                 rows="4"></textarea>
         </div>
         <div class="mb-3">
             <label for="dueDate" class="form-label">Due Date</label>
-            <input type="date" class="form-control" id="dueDate" name="dueDate" [(ngModel)]="task.dueDate">
+            <input type="date" class="form-control" id="dueDate" name="dueDate" [(ngModel)]="specificTask.dueDate">
         </div>
         <div class="mb-3">
             <label for="taskStatus" class="form-label">Task Status</label>
-            <select class="form-control" id="taskStatus" name="status" [(ngModel)]="task.status">
+            <select class="form-control" id="taskStatus" name="status" [(ngModel)]="specificTask.status">
                 <option>Not Started</option>
                 <option>In Progress</option>
                 <option>Completed</option>

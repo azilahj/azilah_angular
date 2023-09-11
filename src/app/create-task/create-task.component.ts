@@ -7,43 +7,71 @@ import { Task, TaskService } from '../task-service.service';
   templateUrl: './create-task.component.html',
   styleUrls: ['./create-task.component.css']
 })
-export class CreateTaskComponent implements OnInit {
-  task: Task = {
+export class CreateTaskComponent {
+  editMode = false;
+  updateTaskid: number = 0;
+  specificTask: Task = {
     id: 0,
     title: '',
     description: '',
-    dueDate: new Date(),
-    status: ''
+    dueDate: new Date('2001-01-01'),
+    status: '',
   };
-  editMode = false;
 
   constructor(
     private taskService: TaskService,
     private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    private router: Router,
+  ) { }
 
   ngOnInit() {
     const taskId = this.route.snapshot.params['id'];
-    if (taskId) {
+    const url = window.location.href;
+
+    if (url.includes('edit-task')) {
       this.editMode = true;
-      this.taskService.getTaskById(taskId).subscribe((task) => {
-        this.task = task;
-      });
+      const match = url.match(/\/edit-task\/(\d+)/);
+
+      if (match) {
+        this.updateTaskid = +match[1];
+        const foundTask = this.taskService.tasks.find(task => task.id === this.updateTaskid);
+
+        if (foundTask) {
+          this.specificTask = foundTask;
+          console.log('Task ID:', this.updateTaskid);
+        } else {
+          console.log('Task not found with ID:', this.updateTaskid);
+        }
+      } else {
+        this.router.navigate(['/task-ui']);
+      }
     }
   }
 
+
   onSubmit(formData: any) {
     if (this.editMode) {
-      //edit mode
-      this.taskService.updateTask(this.task).subscribe(() => {
+
+      const updatedtask: Task = {
+        id: this.updateTaskid,
+        title: formData.title,
+        description: formData.description,
+        dueDate: formData.dueDate,
+        status: formData.status
+      };
+
+      console.log('Task to update ID: ', updatedtask.id);
+
+      this.taskService.updateTask(updatedtask).subscribe(() => {
         console.log('Task updated');
-        this.router.navigate(['/task-ui']); 
+        this.taskService.getTasks();
+        this.router.navigate(['/task-ui']);
       });
+
     } else {
-      //create mode
+
       const task: Task = {
-        id: Math.random(),
+        id: this.taskService.getNextId(),
         title: formData.title,
         description: formData.description,
         dueDate: formData.dueDate,
@@ -51,8 +79,8 @@ export class CreateTaskComponent implements OnInit {
       };
 
       this.taskService.createTask(task).subscribe(() => {
-        console.log('Task created');
-        this.router.navigate(['/task-ui']); 
+        this.taskService.getTasks();
+        this.router.navigate(['/task-ui']);
       });
     }
   }
