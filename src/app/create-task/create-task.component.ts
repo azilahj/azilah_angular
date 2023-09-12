@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Task, TaskService } from '../task-service.service';
 
@@ -8,13 +8,14 @@ import { Task, TaskService } from '../task-service.service';
   styleUrls: ['./create-task.component.css']
 })
 export class CreateTaskComponent {
+  errorMessages: string[] = [];
   editMode = false;
   updateTaskid: number = 0;
   specificTask: Task = {
     id: 0,
     title: '',
     description: '',
-    dueDate: new Date('2001-01-01'),
+    dueDate: new Date(1/1/2001),
     status: '',
   };
 
@@ -25,7 +26,6 @@ export class CreateTaskComponent {
   ) { }
 
   ngOnInit() {
-    const taskId = this.route.snapshot.params['id'];
     const url = window.location.href;
 
     if (url.includes('edit-task')) {
@@ -50,38 +50,43 @@ export class CreateTaskComponent {
 
 
   onSubmit(formData: any) {
-    if (this.editMode) {
 
-      const updatedtask: Task = {
-        id: this.updateTaskid,
-        title: formData.title,
-        description: formData.description,
-        dueDate: formData.dueDate,
-        status: formData.status
-      };
-
-      console.log('Task to update ID: ', updatedtask.id);
-
-      this.taskService.updateTask(updatedtask).subscribe(() => {
-        console.log('Task updated');
-        this.taskService.getTasks();
-        this.router.navigate(['/task-ui']);
-      });
-
+    if ((formData.title === '') || (formData.dueDate.empty) || (formData.status === '')) {
+      this.errorMessages.push('Fields cannot be empty.');
     } else {
+      if (this.editMode) {
 
-      const task: Task = {
-        id: this.taskService.getNextId(),
-        title: formData.title,
-        description: formData.description,
-        dueDate: formData.dueDate,
-        status: formData.status
-      };
+        const updatedtask: Task = {
+          id: this.updateTaskid,
+          title: formData.title,
+          description: formData.description,
+          dueDate: formData.dueDate,
+          status: formData.status
+        };
 
-      this.taskService.createTask(task).subscribe(() => {
-        this.taskService.getTasks();
-        this.router.navigate(['/task-ui']);
-      });
+        console.log('Task to update ID: ', updatedtask.id);
+
+        this.taskService.updateTask(updatedtask).subscribe(() => {
+          console.log('Task updated');
+          this.taskService.getTasks();
+          this.router.navigate(['/task-ui']);
+        });
+
+      } else {
+
+        const task: Task = {
+          id: this.taskService.getNextId(),
+          title: formData.title,
+          description: formData.description,
+          dueDate: formData.dueDate,
+          status: formData.status
+        };
+
+        this.taskService.createTask(task).subscribe(() => {
+          this.taskService.getTasks();
+          this.router.navigate(['/task-ui']);
+        });
+      }
     }
   }
 }

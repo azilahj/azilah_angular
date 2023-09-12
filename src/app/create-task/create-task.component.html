@@ -3,20 +3,25 @@
     <form #taskForm="ngForm" (ngSubmit)="onSubmit(taskForm.value)">
         <div class="mb-3">
             <label for="taskTitle" class="form-label">Task Title</label>
-            <input type="text" class="form-control" id="taskTitle" name="title" [(ngModel)]="specificTask.title" required>
+            <p *ngIf="taskForm.submitted && taskForm.controls['title'].invalid"class="text-danger">Please enter Task Title</p>
+            <input type="text" class="form-control" id="taskTitle" name="title" [(ngModel)]="specificTask.title"
+                minlength="3" required>
         </div>
         <div class="mb-3">
             <label for="taskDescription" class="form-label">Task Description</label>
-            <textarea class="form-control" id="taskDescription" name="description" [(ngModel)]="specificTask.description"
-                rows="4"></textarea>
+            <textarea class="form-control" id="taskDescription" name="description"
+                [(ngModel)]="specificTask.description" rows="4"></textarea>
         </div>
         <div class="mb-3">
             <label for="dueDate" class="form-label">Due Date</label>
-            <input type="date" class="form-control" id="dueDate" name="dueDate" [(ngModel)]="specificTask.dueDate">
+            <p *ngIf="taskForm.submitted && taskForm.controls['dueDate'].invalid"class="text-danger">Please select a Due Date</p>
+            <input type="date" class="form-control" id="dueDate" name="dueDate" [(ngModel)]="specificTask.dueDate"
+                required>
         </div>
         <div class="mb-3">
             <label for="taskStatus" class="form-label">Task Status</label>
-            <select class="form-control" id="taskStatus" name="status" [(ngModel)]="specificTask.status">
+            <p *ngIf="taskForm.submitted && taskForm.controls['status'].invalid"class="text-danger">Please select a Status</p>
+            <select class="form-control" id="taskStatus" name="status" [(ngModel)]="specificTask.status" required>
                 <option>Not Started</option>
                 <option>In Progress</option>
                 <option>Completed</option>
