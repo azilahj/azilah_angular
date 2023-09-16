@@ -11,11 +11,12 @@ export class CreateTaskComponent {
   errorMessages: string[] = [];
   editMode = false;
   updateTaskid: number = 0;
+  
   specificTask: Task = {
     id: 0,
     title: '',
     description: '',
-    dueDate: new Date(1/1/2001),
+    dueDate: new Date(1 / 1 / 2001),
     status: '',
   };
 

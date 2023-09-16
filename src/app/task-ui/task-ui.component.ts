@@ -40,7 +40,7 @@ export class TaskUiComponent implements OnInit {
 
 
   deleteTask(task_: Task) {
-    if(confirm("Are you sure to delete the task "+ task_.title + " ?")) {
+    if (confirm("Are you sure to delete the task " + task_.title + " ?")) {
       this.taskService.deleteTask(task_.id).subscribe(() => {
         this.tasks = this.tasks.filter(task => !this.taskService.deletedtasks.includes(task.id));
       });
