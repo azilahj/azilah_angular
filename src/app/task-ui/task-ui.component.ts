@@ -11,12 +11,12 @@ export class TaskUiComponent implements OnInit {
   selectedStatus: string = 'All Tasks';
   searchKeyword: string = '';
 
-  constructor(private taskService: TaskService) {
-    this.tasks = this.taskService.getTasks();
-  }
+  constructor(private taskService: TaskService) { }
 
   ngOnInit() {
-    this.taskService.getTasks();
+    this.taskService.getTasks().subscribe((tasks: Task[]) => {
+      this.tasks = tasks;
+    });
   }
 
   get filteredTasks(): Task[] {

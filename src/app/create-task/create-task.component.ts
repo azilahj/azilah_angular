@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Task, TaskService } from '../task-service.service';
+import { catchError, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-create-task',
@@ -11,7 +12,7 @@ export class CreateTaskComponent {
   errorMessages: string[] = [];
   editMode = false;
   updateTaskid: number = 0;
-  
+
   specificTask: Task = {
     id: 0,
     title: '',
@@ -34,21 +35,21 @@ export class CreateTaskComponent {
       const match = url.match(/\/edit-task\/(\d+)/);
 
       if (match) {
-        this.updateTaskid = +match[1];
-        const foundTask = this.taskService.tasks.find(task => task.id === this.updateTaskid);
+        const taskId = +match[1];
 
-        if (foundTask) {
-          this.specificTask = foundTask;
-          console.log('Task ID:', this.updateTaskid);
-        } else {
-          console.log('Task not found with ID:', this.updateTaskid);
-        }
+        this.taskService.getTasks().subscribe((tasks: Task[]) => {
+          for (const task of tasks) {
+            if (task['id'].toString().replace(/\s/g, "") === taskId.toString().replace(/\s/g, "")) {
+              this.specificTask = task;
+              console.log("Task found: ",task);
+              break;
+            }}
+        });
       } else {
         this.router.navigate(['/task-ui']);
       }
     }
   }
-
 
   onSubmit(formData: any) {
 
@@ -58,14 +59,12 @@ export class CreateTaskComponent {
       if (this.editMode) {
 
         const updatedtask: Task = {
-          id: this.updateTaskid,
+          id: formData.id,
           title: formData.title,
           description: formData.description,
           dueDate: formData.dueDate,
           status: formData.status
         };
-
-        console.log('Task to update ID: ', updatedtask.id);
 
         this.taskService.updateTask(updatedtask).subscribe(() => {
           console.log('Task updated');
@@ -76,7 +75,7 @@ export class CreateTaskComponent {
       } else {
 
         const task: Task = {
-          id: this.taskService.getNextId(),
+          id: 0,
           title: formData.title,
           description: formData.description,
           dueDate: formData.dueDate,

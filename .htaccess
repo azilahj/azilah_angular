@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/ - [L]
+
+# Handle PHP files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule \.php$ - [L]
+
+# For non-existing PHP files, you can return an error or handle them as needed.
+# Example: Return a 404 error
+# RewriteRule \.php$ - [R=404]

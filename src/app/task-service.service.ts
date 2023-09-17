@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 
 export interface Task {
   id: number;
@@ -15,7 +15,8 @@ export interface Task {
 })
 
 export class TaskService {
-  private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+  //private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+  private apiUrl = 'http://localhost/api/get_data.php';
   private nextId = 1;
 
   tasks: Task[] = [];
@@ -27,9 +28,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  getTasks(): Task[] {
-    this.tasks = this.tasks.filter(task => !this.deletedtasks.includes(task.id));
-    return this.tasks;
+  getTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl);
   }
 
   createTask(taskData: Task): Observable<Task> {
@@ -46,22 +46,13 @@ export class TaskService {
 
 
   updateTask(updatedTask: Task): Observable<Task> {
-    const url = `${this.apiUrl}/${updatedTask.id}`;
   
-    return this.http.put<Task>(url, updatedTask).pipe(
+    return this.http.put<Task>(this.apiUrl, updatedTask).pipe(
       catchError((error: any) => {
         console.error('Error updating task:', error);
         throw error;
       }),
-      map(() => {
-        const taskIndex = this.tasks.findIndex(task => task.id === updatedTask.id);
-  
-        if (taskIndex !== -1) {
-          const updatedTasks = [...this.tasks];
-          updatedTasks[taskIndex] = updatedTask;
-          this.tasks = updatedTasks;
-        }
-  
+      map(() => {  
         console.log('Task updated:', updatedTask);
         return updatedTask;
       })
@@ -72,7 +63,7 @@ export class TaskService {
   deleteTask(id: number): Observable<any> {
     this.deletedtasks.push(id);
     this.getTasks();
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.apiUrl}?id=${id}`;
     return this.http.delete(url);
   }
 }
